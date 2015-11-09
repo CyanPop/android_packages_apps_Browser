@@ -69,9 +69,13 @@
     <dimen name="tab_thumbnail_height">160dip</dimen>
     <dimen name="nav_tab_width">240dip</dimen>
     <dimen name="nav_tab_height">160dip</dimen>
-    <dimen name="nav_tab_titleheight">32dip</dimen>
+    <dimen name="nav_tab_titleheight">24dip</dimen>
     <dimen name="nav_tab_text_normal">18sp</dimen>
     <dimen name="nav_tab_text_small">14sp</dimen>
     <dimen name="suggest_item_padding">8dp</dimen>
     <dimen name="progress_bar_margin">-11dip</dimen>
+    <dimen name="diameter">48dp</dimen>
+    <dimen name="elevation_low">1dp</dimen>
+    <dimen name="elevation_high">4dp</dimen>
+    <dimen name="add_button_margin">16dp</dimen>
 </resources>

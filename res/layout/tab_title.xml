@@ -15,13 +15,14 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:elevation="8dp">
     <ImageView
         android:id="@+id/incognito"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:src="@drawable/ic_incognito_holo_dark"
+        android:src="@drawable/ic_incognito"
         android:contentDescription="@string/accessibility_state_incognito"
         android:visibility="gone" />
     <ImageView
@@ -30,7 +31,7 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:src="@drawable/ic_search_category_history"
-            android:contentDescription="@string/accessibility_state_frozen"
+        android:contentDescription="@string/accessibility_state_frozen"
         android:visibility="gone" />
     <ImageView
         android:id="@+id/favicon"
@@ -58,7 +59,7 @@
         android:singleLine="true" />
     <ImageButton
         android:id="@+id/close"
-        android:background="?android:attr/selectableItemBackground"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/accessibility_button_closetab"

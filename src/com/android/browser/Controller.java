@@ -79,6 +79,8 @@ import android.webkit.WebChromeClient.FileChooserParams;
 import android.webkit.WebIconDatabase;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.browser.IntentHandler.UrlData;
@@ -365,6 +367,7 @@ public class Controller
                 && BrowserActivity.ACTION_SHOW_BOOKMARKS.equals(intent.getAction())) {
             bookmarksOrHistoryPicker(ComboViews.Bookmarks);
         }
+
     }
 
     private static class PruneThumbnails implements Runnable {
@@ -396,7 +399,6 @@ public class Controller
                 cr.delete(Thumbnails.CONTENT_URI, where.toString(), null);
             }
         }
-
     }
 
     @Override
@@ -507,8 +509,9 @@ public class Controller
                                 break;
                             case R.id.open_newtab_context_menu_id:
                                 final Tab parent = mTabControl.getCurrentTab();
-                                openTab(url, parent,
-                                        !mSettings.openInBackground(), true);
+                                boolean privateBrowsing = msg.arg2 == 1;
+                                openTab(url, parent != null && privateBrowsing,
+                                        !mSettings.openInBackground(), true, parent);
                                 break;
                             case R.id.copy_link_context_menu_id:
                                 copy(url);
@@ -1392,6 +1395,42 @@ public class Controller
                                 });
                     }
                 }
+                newTabItem = menu.findItem(R.id.open_newtab_incognito_context_menu_id);
+                newTabItem.setTitle(getSettings().openInBackground()
+                        ? R.string.contextmenu_openlink_incognito_newwindow_background
+                                : R.string.contextmenu_openlink_incognito_newwindow);
+                newTabItem.setVisible(showNewTab);
+                newTabItem.setVisible(!mTabControl.getCurrentTab().isPrivateBrowsingEnabled());
+                if (showNewTab) {
+                    if (WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE == type) {
+                        newTabItem.setOnMenuItemClickListener(
+                                new MenuItem.OnMenuItemClickListener() {
+                                    @Override
+                                    public boolean onMenuItemClick(MenuItem item) {
+                                        final HashMap<String, WebView> hrefMap =
+                                            new HashMap<String, WebView>();
+                                        hrefMap.put("webview", webview);
+                                        final Message msg = mHandler.obtainMessage(
+                                                FOCUS_NODE_HREF,
+                                                R.id.open_newtab_context_menu_id,
+                                                1, hrefMap);
+                                        webview.requestFocusNodeHref(msg);
+                                        return true;
+                                    }
+                                });
+                    } else {
+                        newTabItem.setOnMenuItemClickListener(
+                                new MenuItem.OnMenuItemClickListener() {
+                                    @Override
+                                    public boolean onMenuItemClick(MenuItem item) {
+                                        final Tab parent = mTabControl.getCurrentTab();
+                                        openTab(extra, parent != null,
+                                                !mSettings.openInBackground(), true, parent);
+                                        return true;
+                                    }
+                                });
+                    }
+                }
                 if (type == WebView.HitTestResult.SRC_ANCHOR_TYPE) {
                     break;
                 }
@@ -1548,6 +1587,7 @@ public class Controller
         boolean showDebugSettings = mSettings.isDebugEnabled();
         final MenuItem uaSwitcher = menu.findItem(R.id.ua_desktop_menu_id);
         uaSwitcher.setChecked(isDesktopUa);
+
         menu.setGroupVisible(R.id.LIVE_MENU, isLive);
         menu.setGroupVisible(R.id.SNAPSHOT_MENU, !isLive);
         menu.setGroupVisible(R.id.COMBO_MENU, false);
@@ -1611,7 +1651,7 @@ public class Controller
 
             case R.id.back_menu_id:
                 getCurrentTab().goBack();
-                break;
+                 break;
 
             case R.id.forward_menu_id:
                 getCurrentTab().goForward();
@@ -2731,11 +2771,15 @@ public class Controller
 
     @Override
     public void startVoiceRecognizer() {
-        Intent voice = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        voice.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        voice.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
-        mActivity.startActivityForResult(voice, VOICE_RESULT);
+        try {
+            Intent voice = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            voice.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            voice.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+            mActivity.startActivityForResult(voice, VOICE_RESULT);
+        } catch(android.content.ActivityNotFoundException ex) {
+            Log.e(LOGTAG, "Could not start voice recognizer activity");
+        }
     }
 
     @Override

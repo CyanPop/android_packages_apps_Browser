@@ -60,8 +60,8 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
 
     // TODO: Do something with this UserAgent stuff
     private static final String DESKTOP_USERAGENT = "Mozilla/5.0 (X11; " +
-        "Linux x86_64) AppleWebKit/534.24 (KHTML, like Gecko) " +
-        "Chrome/11.0.696.34 Safari/534.24";
+        "Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) " +
+        "Chrome/37.0.2049.0 Safari/537.36";
 
     private static final String IPHONE_USERAGENT = "Mozilla/5.0 (iPhone; U; " +
         "CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 " +
@@ -612,6 +612,10 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         return mPrefs.getString(PREF_SEARCH_ENGINE, SearchEngine.GOOGLE);
     }
 
+    public int getUserAgent() {
+        return Integer.parseInt(mPrefs.getString(PREF_USER_AGENT, "0"));
+    }
+
     public boolean allowAppTabs() {
         return mPrefs.getBoolean(PREF_ALLOW_APP_TABS, false);
     }
@@ -694,13 +698,6 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         return mPrefs.getBoolean(PREF_ENABLE_HARDWARE_ACCEL_SKIA, false);
     }
 
-    public int getUserAgent() {
-        if (!isDebugEnabled()) {
-            return 0;
-        }
-        return Integer.parseInt(mPrefs.getString(PREF_USER_AGENT, "0"));
-    }
-
     // -----------------------------
     // getter/setters for hidden_debug_preferences.xml
     // -----------------------------
@@ -769,7 +766,7 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
     }
 
     // -----------------------------
-    // getter/setters for lab_preferences.xml
+    // getter/setters for interface.xml
     // -----------------------------
 
     public boolean useQuickControls() {
